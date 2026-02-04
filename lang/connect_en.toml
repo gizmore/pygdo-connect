@@ -1,0 +1,5 @@
+module_connect = "Connect"
+
+mt_connect_overview = "Connect to the bot"
+md_connect_overview = "Show an overview of chat networks to connect with this site's bot."
+
