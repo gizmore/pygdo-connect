@@ -4,11 +4,9 @@ from gdo.base.Render import Mode
 from gdo.core.GDO_Server import GDO_Server
 from gdo.core.GDT_String import GDT_String
 from gdo.form.GDT_Form import GDT_Form
-from gdo.message.GDT_HTML import GDT_HTML
 from gdo.message.GDT_Paragraph import GDT_Paragraph
 from gdo.table.GDT_Table import TableMode
 from gdo.table.MethodQueryTable import MethodQueryTable
-from gdo.ui.GDT_Link import GDT_Link
 
 
 class overview(MethodQueryTable):
@@ -30,10 +28,10 @@ class overview(MethodQueryTable):
         form.text('info_connector_list')
 
     def render_gdo(self, gdo: GDO, mode: Mode) -> any:
-        t = self.gdo_table()
         return GDT_Paragraph().add_fields(
             gdo.column('serv_id'),
             gdo.column('serv_name'),
+            GDT_String().val(' - '),
             GDT_String().val(gdo.get_connector().render_user_connect_help()),
-            GDT_String().val("("+gdo.gdo_val('serv_trigger')+"help"+")")
-        ).render(mode)
+            GDT_String().val(gdo.get_connector().render_user_command_help()),
+        ).render_list()
