@@ -3,6 +3,7 @@ from gdo.base.Query import Query
 from gdo.base.Render import Mode
 from gdo.core.GDO_Server import GDO_Server
 from gdo.core.GDT_String import GDT_String
+from gdo.date.Time import Time
 from gdo.form.GDT_Form import GDT_Form
 from gdo.message.GDT_Paragraph import GDT_Paragraph
 from gdo.table.GDT_Table import TableMode
@@ -10,6 +11,9 @@ from gdo.table.MethodQueryTable import MethodQueryTable
 
 
 class overview(MethodQueryTable):
+
+    def gdo_cached(cls) -> int:
+        return Time.ONE_HOUR
 
     @classmethod
     def gdo_trigger(cls) -> str:
