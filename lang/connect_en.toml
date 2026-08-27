@@ -3,3 +3,5 @@ module_connect = "Connect"
 mt_connect_overview = "Connect to the bot"
 md_connect_overview = "Show an overview of chat networks to connect with this site's bot."
 
+title_raw_tcp = "Raw TCP/IP"
+info_raw_tcp = "Connect with <code>nc %s %s</code>, then log in using <code>$tcpauth &lt;username&gt; &lt;password&gt;</code>."
