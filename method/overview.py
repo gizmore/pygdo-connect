@@ -11,6 +11,7 @@ from gdo.table.GDT_Table import TableMode
 from gdo.table.MethodQueryTable import MethodQueryTable
 from gdo.ui.GDT_Panel import GDT_Panel
 from gdo.core.GDT_Container import GDT_Container
+from gdo.ui.GDT_Link import GDT_Link
 
 
 class overview(MethodQueryTable):
@@ -44,10 +45,17 @@ class overview(MethodQueryTable):
         return result
 
     def render_gdo(self, gdo: GDO, mode: Mode) -> any:
+        connect_help = gdo.get_connector().render_user_connect_help()
+        # Connector help is normally prose, but an invitation URL should be a
+        # real link rather than escaped markup in the connect overview.
+        if connect_help.startswith(('https://', 'http://')):
+            connect_help = GDT_Link().href(connect_help).text_raw(connect_help).icon(None)
+        else:
+            connect_help = GDT_String().val(connect_help)
         return GDT_Paragraph().add_fields(
             gdo.column('serv_id'),
             gdo.column('serv_name'),
             GDT_String().val(' - '),
-            GDT_String().val(gdo.get_connector().render_user_connect_help()),
+            connect_help,
             GDT_String().val(gdo.get_connector().render_user_command_help()),
         ).render_list()
