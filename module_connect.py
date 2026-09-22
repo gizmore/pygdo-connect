@@ -5,5 +5,8 @@ from gdo.ui.GDT_Page import GDT_Page
 
 class module_connect(GDO_Module):
 
+    def gdo_load_scripts(self, page: 'GDT_Page'):
+        self.add_css('css/pygdo-connect.css')
+
     def gdo_init_sidebar(self, page: 'GDT_Page'):
         page._left_bar.add_field(GDT_Link().text('module_connect').href(self.href('overview')))
