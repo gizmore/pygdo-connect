@@ -5,6 +5,7 @@ from gdo.base.Application import Application
 from gdo.core.GDO_Server import GDO_Server
 from gdo.base.GDT import GDT
 from gdo.core.GDT_String import GDT_String
+from gdo.message.GDT_HTML import GDT_HTML
 from gdo.date.Time import Time
 from gdo.message.GDT_Paragraph import GDT_Paragraph
 from gdo.table.GDT_Table import TableMode
@@ -46,16 +47,10 @@ class overview(MethodQueryTable):
 
     def render_gdo(self, gdo: GDO, mode: Mode) -> any:
         connect_help = gdo.get_connector().render_user_connect_help()
-        # Connector help is normally prose, but an invitation URL should be a
-        # real link rather than escaped markup in the connect overview.
-        if connect_help.startswith(('https://', 'http://')):
-            connect_help = GDT_Link().href(connect_help).text_raw(connect_help).icon(None)
-        else:
-            connect_help = GDT_String().val(connect_help)
         return GDT_Paragraph().add_fields(
             gdo.column('serv_id'),
             gdo.column('serv_name'),
             GDT_String().val(' - '),
-            connect_help,
+            GDT_HTML().html(connect_help),
             GDT_String().val(gdo.get_connector().render_user_command_help()),
         ).render_list()
