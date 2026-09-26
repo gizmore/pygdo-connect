@@ -90,20 +90,34 @@ class overview(MethodQueryTable):
 
     @staticmethod
     def autojoin_channels(server: GDO_Server) -> list:
-        if server.get_connector_name() != 'irc':
-            return []
         return [channel for channel in server.query_channels()
                 if channel.gdo_val('chan_autojoin') == '1']
 
+    @staticmethod
+    def listed_channels(server: GDO_Server) -> list:
+        """Return the useful public channel list for one connector.
+
+        Discord has no IRC-style join loop: its channel records are discovered
+        from gateway events, so all known channels are useful to show.  Other
+        connectors expose only their opted-in autojoin channels.
+        """
+        if getattr(server, 'get_connector_name', lambda: '')() == 'discord':
+            return list(server.query_channels())
+        return overview.autojoin_channels(server)
+
     @classmethod
     def render_autojoin_channels(cls, server: GDO_Server) -> str:
-        channels = cls.autojoin_channels(server)
+        channels = cls.listed_channels(server)
         if not channels:
             return ''
-        names = ''.join(f'<li>{html(channel.get_name())}</li>' for channel in channels)
+        title = 'connect_known_channels' if getattr(server, 'get_connector_name', lambda: '')() == 'discord' else 'connect_autojoin'
+        names = ''.join(
+            f'<li>{html(channel.render_name() if hasattr(channel, "render_name") else channel.get_name())}</li>'
+            for channel in channels
+        )
         return f'''\
 <div class="connect-overview__autojoin">
-  <strong>{html(t('connect_autojoin'))}</strong>
+  <strong>{html(t(title))}</strong>
   <ul>{names}</ul>
 </div>'''
 

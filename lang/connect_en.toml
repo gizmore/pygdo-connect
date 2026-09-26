@@ -14,6 +14,7 @@ connect_networks_intro = "Use the service you already have. The bot keeps the co
 connect_connector_eyebrow = "Connector"
 connect_card_identity = "Find %s; commands start with %s."
 connect_autojoin = "Autojoin channels"
+connect_known_channels = "Known channels"
 connect_description_bash = "Use an SSH terminal if you already have server access. This route is mainly for command-line users."
 connect_description_discord = "Join the community Discord server, then talk to the Dog in its available channels."
 connect_description_generic = "Connect through this gateway and use its normal chat interface to reach the Dog."

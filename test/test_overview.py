@@ -120,13 +120,16 @@ class ConnectOverviewTest(unittest.TestCase):
             def get_name(self):
                 return self.name
 
+            def render_name(self):
+                return f'Display {self.name}'
+
         with patch.object(overview, 'autojoin_channels', return_value=[Channel('#alpha'), Channel('#beta')]):
             rendered = overview.render_autojoin_channels(object())
         self.assertIn('connect_autojoin', rendered)
-        self.assertIn('#alpha', rendered)
-        self.assertIn('#beta', rendered)
+        self.assertIn('Display #alpha', rendered)
+        self.assertIn('Display #beta', rendered)
 
-    def test_autojoin_channels_read_the_channel_database_field(self):
+    def test_autojoin_channels_read_the_channel_database_field_for_every_connector(self):
         class Channel:
             def __init__(self, enabled):
                 self.enabled = enabled
@@ -137,7 +140,7 @@ class ConnectOverviewTest(unittest.TestCase):
 
         class Server:
             def get_connector_name(self):
-                return 'irc'
+                return 'telegram'
 
             def query_channels(self):
                 return [Channel('1'), Channel('0')]
@@ -145,3 +148,24 @@ class ConnectOverviewTest(unittest.TestCase):
         channels = overview.autojoin_channels(Server())
         self.assertEqual(1, len(channels))
         self.assertEqual('1', channels[0].enabled)
+
+    @patch('gdo.connect.method.overview.t', side_effect=lambda key, *_: key)
+    def test_discord_shows_all_known_channels(self, _):
+        class Channel:
+            def __init__(self, name):
+                self.name = name
+
+            def get_name(self):
+                return self.name
+
+        class Server:
+            def get_connector_name(self):
+                return 'discord'
+
+            def query_channels(self):
+                return [Channel('general'), Channel('quiet-room')]
+
+        rendered = overview.render_autojoin_channels(Server())
+        self.assertIn('connect_known_channels', rendered)
+        self.assertIn('general', rendered)
+        self.assertIn('quiet-room', rendered)
